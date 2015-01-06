@@ -1,0 +1,114 @@
+/* Color scheme found on Adobe Kuler:
+   https://kuler.adobe.com/Branding-Colors-color-theme-3861663 */
+
+body {
+    margin: 0;
+    padding: 0;
+    overflow:hidden;
+    background: #4C5D75;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: default;
+}
+
+#title {
+    position: absolute;
+    font-family: Consolas;
+    left: 100px;
+    width: 1624px;
+    height: 75px;
+    top: 25px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 36pt;
+    color: #BED4DF;
+}
+
+#gl-canvas {
+    position: absolute;
+    left: 400px;
+    top: 100px;
+    background: #323E4E;
+    width: 1024;
+    height: 1024;
+    display: block;
+}
+
+#menu{
+    padding: 5px;
+    background: #2D3032;
+    color: #BED4DF;
+    position: absolute;
+    left: 100px;
+    top: 100px;
+    font-family: Consolas;
+    width: 290px;
+    height: 1014px;
+    overflow-y: auto;
+}
+
+#menu .active, #menu .active:hover {
+    color: #78A3B9;
+}
+
+#menu a:hover {
+    color: #78A3B9;
+}
+
+#debug{
+    padding: 5px;
+    background: #2D3032;
+    color: #BED4DF;
+    position: absolute;
+    left: 1424px;
+    top: 100px;
+    font-family: Consolas;
+    width: 290px;
+    height: 1014px;
+    overflow-y: auto;
+}
+
+#debug ul.attention {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 20px;
+}
+
+#debug ul.attention li {
+  padding-left: 1.2em;
+  text-indent: -1.2em;
+}
+
+#debug ul.attention li:before {
+  content: "!";
+  padding-right: 10px;
+}
+
+#data-left-div {
+    position: absolute;
+    left: 410px;
+    top: 105px;
+    width: 1024;
+    font-size: 20pt;
+    font-weight: bold;
+    font-family: Consolas;
+    text-align: left;
+    color: #2D3032;
+}
+
+#data-right-div {
+    position: absolute;
+    left: 400px;
+    top: 105px;
+    width: 1014px;
+    font-size: 20pt;
+    font-weight: bold;
+    font-family: Consolas;
+    text-align: right;
+    color: #2D3032;
+}
