@@ -4,7 +4,7 @@ var resolution = 1024; // We're assuming a square aspect ratio
 // the coordinate range [-1, 1].
 // The scaling is done in the shaders, but is has to be taking into account
 // in obtaining coordinates from the mouse position.
-var renderScale = 0.9;
+var renderScale = 1;
 var maxCoord = 1/renderScale;
 
 // A square this big in our [-1, 1] coordinate system will be roughly

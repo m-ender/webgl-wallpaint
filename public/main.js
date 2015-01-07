@@ -22,11 +22,8 @@ var lastTime;
 // Change this angle to rotate the entire viewport
 var angle = 0;
 
-// A few global lists for graphics primitives to quickly
-// dump some debug output in.
-var circles = [];
-var polygons = [];
-var lines = [];
+// Global to store the quad
+var quad;
 
 window.onload = init;
 
@@ -64,6 +61,7 @@ function init()
     } else {
         messageBox.html("WebGL up and running!");
     }
+    gl.getExtension('OES_standard_derivatives');
 
     renderMenu();
 
@@ -72,12 +70,7 @@ function init()
     // Load shaders and get uniform locations
     shaderProgram.program = InitShaders(gl, "2d-vertex-shader", "minimal-fragment-shader");
     // add uniform locations
-    shaderProgram.uRenderScale = gl.getUniformLocation(shaderProgram.program, "uRenderScale");
-    shaderProgram.uViewPortAngle = gl.getUniformLocation(shaderProgram.program, "uViewPortAngle");
-    shaderProgram.uCenter = gl.getUniformLocation(shaderProgram.program, "uCenter");
-    shaderProgram.uColor = gl.getUniformLocation(shaderProgram.program, "uColor");
-    shaderProgram.uScale = gl.getUniformLocation(shaderProgram.program, "uScale");
-    shaderProgram.uAngle = gl.getUniformLocation(shaderProgram.program, "uAngle");
+    shaderProgram.uSeed = gl.getUniformLocation(shaderProgram.program, "uSeed");
     // add attribute locations
     shaderProgram.aPos = gl.getAttribLocation(shaderProgram.program, "aPos");
 
@@ -88,35 +81,24 @@ function init()
 
     gl.useProgram(null);
 
-    prepareCircles();
-
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
     CheckError();
 
     // Set up a bit of geometry to render
 
-    var i;
-    for (i = 0; i < 11; ++i)
-        circles.push(new Circle(-0.5 + 0.1*i, 0, colorGenerator.next(true), markerRadius));
+    quad = new ConvexPolygon([
+             {x: -1, y: -1},
+             {x:  1, y: -1},
+             {x:  1, y:  1},
+             {x: -1, y:  1},
+           ]);
 
-    var points = [];
-    for (i = 0; i < 5; ++i)
-        points.push({
-            x: 0.7*cos(2*pi/5*i),
-            y: 0.7*sin(2*pi/5*i),
-        });
-    polygons.push(new ConvexPolygon(points));
-
-    polygons.push(ConvexPolygon.CreateArrow(0.1, 0.05, {x:-0.7, y:0}, {x:1,y:0}));
-    polygons.push(ConvexPolygon.CreateArrow(0.1, 0.05, {x:0.73, y:0}, {x:1,y:0}));
-
-    lines.push(new Line({x: -0.5, y: 0.15}, {x: 0.5, y: 0.15}, 'white', lineThickness));
-    lines.push(new Line({x: -0.5, y: -0.15}, {x: 0.5, y: -0.15}, 'white', lineThickness));
-
-    drawScreen();
-    lastTime = Date.now();
-    update();
+    seed = Math.floor(Math.random()*MAX_INT);
+    console.log("Seed: "+seed);
+    drawScreen(Math.random(seed));
+    //lastTime = Date.now();
+    //update();
 }
 
 // This will be added to the right sidebar, if the debug flag is not set.
@@ -218,7 +200,7 @@ function update()
     }
 }
 
-function drawScreen()
+function drawScreen(seed)
 {
     var i;
 
@@ -228,21 +210,11 @@ function drawScreen()
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     gl.useProgram(shaderProgram.program);
-    gl.uniform1f(shaderProgram.uViewPortAngle, angle);
+    gl.uniform1f(shaderProgram.uSeed, seed);
 
     // add rendering of your game objects/scene graph here
 
-    for (i = 0; i < polygons.length; ++i)
-    {
-        polygons[i].render();
-        polygons[i].render(true);
-    }
-
-    for (i = 0; i < lines.length; ++i)
-        lines[i].render();
-
-    for (i = 0; i < circles.length; ++i)
-        circles[i].render();
+    quad.render();
 
     gl.useProgram(null);
 

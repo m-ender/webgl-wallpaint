@@ -88,27 +88,3 @@ body {
   content: "!";
   padding-right: 10px;
 }
-
-#data-left-div {
-    position: absolute;
-    left: 410px;
-    top: 105px;
-    width: 1024;
-    font-size: 20pt;
-    font-weight: bold;
-    font-family: Consolas;
-    text-align: left;
-    color: #2D3032;
-}
-
-#data-right-div {
-    position: absolute;
-    left: 400px;
-    top: 105px;
-    width: 1014px;
-    font-size: 20pt;
-    font-weight: bold;
-    font-family: Consolas;
-    text-align: right;
-    color: #2D3032;
-}
