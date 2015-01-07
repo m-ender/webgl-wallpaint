@@ -224,6 +224,9 @@ function drawScreen(seed)
 
     gl.useProgram(shaderProgram.program);
     gl.uniform1f(shaderProgram.uSeed, seed);
+
+    seed *= 1.61803398875;
+
     if (mouseLight)
         gl.uniform2f(shaderProgram.uLightPos, cursor.x, cursor.y);
     else
