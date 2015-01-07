@@ -97,7 +97,7 @@ function init()
 
     seed = Math.floor(Math.random()*65536);
     console.log("Seed: "+seed);
-    drawScreen(0);
+    drawScreen(seed);
     lastTime = Date.now();
     update();
 }
