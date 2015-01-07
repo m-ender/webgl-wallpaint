@@ -19,8 +19,10 @@ var fps = 60;
 var interval = 1000/fps;
 var lastTime;
 
-// Change this angle to rotate the entire viewport
-var angle = 0;
+// Cursor position
+var cursor = {x: 0, y: 0};
+var mouseLight = false;
+var lastSeed = 0;
 
 // Global to store the quad
 var quad;
@@ -71,13 +73,12 @@ function init()
     shaderProgram.program = InitShaders(gl, "2d-vertex-shader", "minimal-fragment-shader");
     // add uniform locations
     shaderProgram.uSeed = gl.getUniformLocation(shaderProgram.program, "uSeed");
+    shaderProgram.uLightPos = gl.getUniformLocation(shaderProgram.program, "uLightPos");
     // add attribute locations
     shaderProgram.aPos = gl.getAttribLocation(shaderProgram.program, "aPos");
 
     // fill uniforms that are already known
     gl.useProgram(shaderProgram.program);
-    gl.uniform1f(shaderProgram.uRenderScale, renderScale);
-    gl.uniform1f(shaderProgram.uViewPortAngle, angle);
 
     gl.useProgram(null);
 
@@ -96,9 +97,9 @@ function init()
 
     seed = Math.floor(Math.random()*65536);
     console.log("Seed: "+seed);
-    drawScreen(seed);
-    //lastTime = Date.now();
-    //update();
+    drawScreen(0);
+    lastTime = Date.now();
+    update();
 }
 
 // This will be added to the right sidebar, if the debug flag is not set.
@@ -113,10 +114,17 @@ function renderInstructions()
 function renderMenu()
 {
     // Add your menu's HTML here.
-    optionsBox.html('Add <a>your menu</a> here');
+    optionsBox.html('<a><input type="checkbox" id="mouseLight"> ' +
+                    '<label for="mouseLight">Movable light source</label></a>');
 
-    // Then set up some 'change' or 'click' or 'blur' handlers with
-    // jQuery here.
+    optionsBox.find('#mouseLight').bind('change', setMouseLight);
+}
+
+function setMouseLight()
+{
+    mouseLight = optionsBox.find('#mouseLight')[0].checked;
+
+    drawScreen();
 }
 
 // I'm pretty sure I ripped this code off someone else initially, but I
@@ -202,6 +210,11 @@ function update()
 
 function drawScreen(seed)
 {
+    if (seed == undefined)
+        seed = lastSeed;
+    else
+        lastSeed = seed;
+
     var i;
 
     gl.enable(gl.BLEND);
@@ -211,6 +224,10 @@ function drawScreen(seed)
 
     gl.useProgram(shaderProgram.program);
     gl.uniform1f(shaderProgram.uSeed, seed);
+    if (mouseLight)
+        gl.uniform2f(shaderProgram.uLightPos, cursor.x, cursor.y);
+    else
+        gl.uniform2f(shaderProgram.uLightPos, seed % 2.0 -1.0, (seed*seed) % 2.0 - 1.0);
 
     // add rendering of your game objects/scene graph here
 
@@ -230,6 +247,8 @@ function handleMouseMove(event) {
         debugBox.find('#xcoord').html(coords.x);
         debugBox.find('#ycoord').html(coords.y);
     }
+
+    cursor = coords;
 }
 
 function handleMouseDown(event) {
@@ -279,8 +298,8 @@ function normaliseCursorCoordinates(event, rect)
     var x = (2*(event.clientX - rect.left) / resolution - 1) / renderScale;
     var y = (1 - 2*(event.clientY - rect.top) / resolution) / renderScale; // invert, to make positive y point upwards
     return {
-        x:  x*cos(angle) + y*sin(angle),
-        y: -x*sin(angle) + y*cos(angle)
+        x: x,
+        y: y
     };
 }
 
