@@ -131,17 +131,24 @@
 
         void main() {
             float seed = uSeed * 1.61803398875;
+            // Choose a random light position
             vec3 light = vec3(mod(seed,2.0)-1.0, mod(seed*seed,2.0)-1.0, 2.5);
             float x = vPos.x;
             float y = vPos.y;
 
+            // Add a handful of octaves of simplex noise
             float noise = 0.0;
             for ( int i=3; i>=0; i-- )
             {
                 float oct = pow(2.0,float(i));
                 noise += snoise(vec2(mod(seed,13.0)+x*oct,mod(seed*seed,11.0)+y*oct))/oct*3.0;
             }
+            // Level off the noise with tanh
             noise = tanh(noise)*6.0;
+            noise += snoise(vec2(mod(seed,13.0)+x*16.0,mod(seed*seed,11.0)+y*16.0))/32.0*3.0;
+            noise += snoise(vec2(mod(seed,13.0)+x*32.0,mod(seed*seed,11.0)+y*32.0))/64.0*3.0;
+
+            // And now, the lighting
             float dhdx = dFdx(noise);
             float dhdy = dFdy(noise);
             vec3 N = normalize(vec3(-dhdx, -dhdy, 1.0)); // surface normal
